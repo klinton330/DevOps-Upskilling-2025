@@ -1,0 +1,41 @@
+
+services:
+  accounts:
+    image: klinton330/account-service-app:v1
+    container_name: accounts-ms
+    ports:
+      - "8085:8085"
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    networks:
+      - minibank
+
+  loans:
+    image: klinton330/loan-service-app:v1
+    container_name: loans-ms
+    ports:
+      - "8090:8090"
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    networks:
+      - minibank
+
+  cards:
+    image: klinton330/card-service-app:v1
+    container_name: cards-ms
+    ports:
+      - "8095:8095"
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    networks:
+      - minibank
+
+networks:
+  minibank:
+    driver: bridge

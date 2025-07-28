@@ -1,0 +1,34 @@
+server:
+  port: 8090
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driverClassName: org.h2.Driver
+    username: sa
+    password: ''
+  h2:
+    console:
+      enabled: true
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  application:
+    name: loan-service-app
+  config:
+    activate: 
+      on-profile: "prod"
+
+build:
+  version: loanservice-1.0
+
+loans:
+  message: "Welcome to EazyBank loans related PROD APIs"
+  contactDetails:
+    name: "hariloan - Developer"
+    email: "hariloans@gmail.com"
+  onCallSupport:
+    - "(555) 555-1234"
+    - "(555) 523-1345"
