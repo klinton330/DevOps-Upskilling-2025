@@ -1,0 +1,102 @@
+version: "3.9"
+
+services:
+  accountsdb:
+    container_name: accountsdb
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_DATABASE: accountsdb
+    extends:
+      file: common-config.yml
+      service: microservice-db-config
+  
+  loansdb:
+    container_name: loansdb
+    ports:
+      - "3308:3306"
+    environment:
+      MYSQL_DATABASE: loansdb
+    extends:
+      file: common-config.yml
+      service: microservice-db-config
+      
+  cardsdb:
+    container_name: cardsdb
+    ports:
+      - "3309:3306"
+    environment:
+      MYSQL_DATABASE: cardsdb
+    extends:
+      file: common-config.yml
+      service: microservice-db-config
+      
+  config-server:
+    image: klinton330/configserver:v3
+    container_name: config-server
+    ports:
+      - "8071:8071"
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail --silent localhost:8071/actuator/health/readiness | grep UP || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    extends:
+      file: common-config.yml
+      service: microservice-base-config
+
+  accounts:
+    image: klinton330/account-service-app:v3
+    container_name: accounts-ms
+    ports:
+      - "8085:8085"
+    depends_on:
+      config-server:
+        condition: service_healthy
+      accountsdb:
+        condition: service_healthy
+    extends:
+      file: common-config.yml
+      service: microservice-configserver-config
+    environment:
+      SPRING_APPLICATION_NAME: account-service-app
+      SPRING_DATASOURCE_URL: jdbc:mysql://accountsdb:3306/accountsdb
+   
+  loans:
+    image: klinton330/loan-service-app:v3
+    container_name: loans-ms
+    ports:
+      - "8090:8090"
+    depends_on:
+      config-server:
+        condition: service_healthy
+      loansdb:
+        condition: service_healthy
+    extends:
+      file: common-config.yml
+      service: microservice-configserver-config
+    environment:
+      SPRING_APPLICATION_NAME: loan-service-app
+      SPRING_DATASOURCE_URL: jdbc:mysql://loansdb:3307/loansdb
+
+  cards:
+    image: klinton330/card-service-app:v3
+    container_name: cards-ms
+    ports:
+      - "8095:8095"
+    depends_on:
+      config-server:
+        condition: service_healthy
+      cardsdb:
+        condition: service_healthy
+    extends:
+      file: common-config.yml
+      service: microservice-configserver-config
+    environment:
+      SPRING_APPLICATION_NAME: card-service-app
+      SPRING_DATASOURCE_URL: jdbc:mysql://cardsdb:3308/cardsdb
+
+networks:
+  minibank:
+    driver: bridge

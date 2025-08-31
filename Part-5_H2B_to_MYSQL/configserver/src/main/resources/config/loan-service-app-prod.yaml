@@ -1,0 +1,11 @@
+build:
+  version: loanservice-1.0
+
+loans:
+  message: "Welcome to EazyBank loans related PRODUCTION APIs"
+  contactDetails:
+    name: "loan - Developer"
+    email: "loan@gmail.com"
+  onCallSupport:
+    - "(555) 555-1234"
+    - "(555) 523-1345"
